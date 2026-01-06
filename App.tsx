@@ -74,7 +74,9 @@ const App: React.FC = () => {
   const [gameUserInput, setGameUserInput] = useState<string[]>([]);
   const [gameFeedback, setGameFeedback] = useState<{ isCorrect: boolean; message: string } | null>(null);
   const [gameScore, setGameScore] = useState(0);
+  const [blankWord, setBlankWord] = useState<string>('');
   const [blankIndices, setBlankIndices] = useState<number[]>([]);
+  const [gameRecordingIndex, setGameRecordingIndex] = useState<number | null>(null); // Track which blank is recording
   const [gameBlankCount, setGameBlankCount] = useState(1);
   const [showGameSettings, setShowGameSettings] = useState(false);
 
@@ -117,6 +119,7 @@ const App: React.FC = () => {
     setBlankIndices(selected);
     setGameUserInput(new Array(selected.length).fill(''));
     setGameFeedback(null);
+    setGameRecordingIndex(null);
   };
 
   const handleStartSentenceGame = (count: number) => {
@@ -163,6 +166,26 @@ const App: React.FC = () => {
     }
   };
 
+  const handleToggleGameRecording = (index: number) => {
+    if (gameRecordingIndex === index) {
+      // Stop recording
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+        mediaRecorderRef.current.stop();
+      }
+      setGameRecordingIndex(null);
+    } else {
+      // Start recording
+      if (gameRecordingIndex !== null) {
+        // Stop previous if any (though UI shouldn't allow)
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+          mediaRecorderRef.current.stop();
+        }
+      }
+      setGameRecordingIndex(index);
+      startRecordingFlow('game_input', index);
+    }
+  };
+
   const renderSentenceGameStep = () => {
     if (!state.lesson) return null;
     const isFinished = gameCurrentIndex >= state.lesson.sentences.length;
@@ -197,10 +220,10 @@ const App: React.FC = () => {
           <h2 className="text-2xl font-bold text-slate-800">문장 완성 연습 ({gameCurrentIndex + 1}/{state.lesson.sentences.length})</h2>
         </div>
 
-        <div className="bg-white p-10 rounded-[40px] shadow-xl border border-slate-100 text-center space-y-10">
+        <div className="bg-white p-6 md:p-10 rounded-[32px] md:rounded-[40px] shadow-xl border border-slate-100 text-center space-y-6 md:space-y-10">
           <p className="text-lg text-slate-400 font-medium">{sentence.korean}</p>
 
-          <div className="text-2xl font-bold text-slate-800 leading-relaxed flex flex-wrap justify-center gap-2 items-center">
+          <div className="text-xl md:text-2xl font-bold text-slate-800 leading-relaxed flex flex-wrap justify-center gap-x-2 gap-y-4 items-center">
             {words.map((word, idx) => {
               const isBlank = blankIndices.includes(idx);
               const blankIndex = blankIndices.indexOf(idx);
@@ -209,22 +232,35 @@ const App: React.FC = () => {
               const punctuation = word.slice(cleanWord.length);
 
               if (isBlank) {
+                const isRecordingThis = gameRecordingIndex === blankIndex;
                 return (
-                  <span key={idx} className="flex items-center">
-                    <input
-                      type="text"
-                      value={gameUserInput[blankIndex] || ''}
-                      onChange={(e) => {
-                        const newInputs = [...gameUserInput];
-                        newInputs[blankIndex] = e.target.value;
-                        setGameUserInput(newInputs);
-                      }}
+                  <span key={idx} className="flex flex-col items-center gap-1 relative">
+                    <div className="flex items-center">
+                      <input
+                        type="text"
+                        value={gameUserInput[blankIndex] || ''}
+                        onChange={(e) => {
+                          const newInputs = [...gameUserInput];
+                          newInputs[blankIndex] = e.target.value;
+                          setGameUserInput(newInputs);
+                        }}
+                        disabled={!!gameFeedback}
+                        className={`border-b-2 outline-none px-2 py-1 min-w-[80px] text-center bg-indigo-50 text-indigo-700 rounded-md mx-1 transition-all ${isRecordingThis ? 'border-rose-500 ring-2 ring-rose-200' : 'border-indigo-500'}`}
+                        style={{ width: `${Math.max(80, cleanWord.length * 15)}px` }}
+                        placeholder="?"
+                      />
+                      {punctuation}
+                    </div>
+                    <button
+                      onClick={() => handleToggleGameRecording(blankIndex)}
                       disabled={!!gameFeedback}
-                      className="border-b-2 border-indigo-500 outline-none px-2 py-1 min-w-[80px] text-center bg-indigo-50 text-indigo-700 rounded-md mx-1"
-                      style={{ width: `${Math.max(80, cleanWord.length * 15)}px` }}
-                      placeholder="?"
-                    />
-                    {punctuation}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all shadow-sm ${isRecordingThis
+                        ? 'bg-rose-500 text-white animate-pulse ring-2 ring-rose-200'
+                        : 'bg-white text-slate-400 border border-slate-200 hover:text-indigo-600 hover:border-indigo-200'
+                        }`}
+                    >
+                      <i className={`fas ${isRecordingThis ? 'fa-stop' : 'fa-microphone'}`}></i>
+                    </button>
                   </span>
                 );
               }
@@ -327,10 +363,10 @@ const App: React.FC = () => {
     }
   };
 
-  const startRecordingFlow = async (recordingType: 'practice' | 'input') => {
+  const startRecordingFlow = async (recordingType: 'practice' | 'input' | 'game_input', gameInputIndex?: number) => {
     if (recordingType === 'practice') {
       setIsRecording(true);
-    } else {
+    } else if (recordingType === 'input') {
       setIsInputRecording(true);
     }
     setPronunciationResult(null);
@@ -379,23 +415,34 @@ const App: React.FC = () => {
               setIsLoading(false);
               setLoadingMessage(undefined);
             }
-          } else if (recordingType === 'input') {
-            setLoadingMessage("이야기를 받아적고 있습니다...");
+          } else if (recordingType === 'input' || recordingType === 'game_input') {
+            setLoadingMessage("음성을 텍스트로 변환 중...");
             setIsLoading(true);
             try {
               console.log('Transcription start: mimeType', mimeType);
               console.log('Audio base64 size', base64data.length);
               const transcribedText = await transcribeAudio(base64data, mimeType);
               console.log('Transcribed text:', transcribedText);
+
               if (transcribedText) {
-                setState(prev => ({
-                  ...prev,
-                  storyInput: prev.storyInput ? prev.storyInput + " " + transcribedText : transcribedText
-                }));
+                if (recordingType === 'input') {
+                  setState(prev => ({
+                    ...prev,
+                    storyInput: prev.storyInput ? prev.storyInput + " " + transcribedText : transcribedText
+                  }));
+                } else if (recordingType === 'game_input' && gameInputIndex !== undefined) {
+                  const newInputs = [...gameUserInput];
+                  // Remove trailing punctuation if present in transcription to fit blank better? 
+                  // For now just raw text.
+                  newInputs[gameInputIndex] = transcribedText.replace(/[.,!?]/g, '').trim();
+                  setGameUserInput(newInputs);
+                  setGameRecordingIndex(null);
+                }
               }
             } catch (err) {
               console.error("Transcription error:", err);
               alert("음성 인식 중 오류가 발생했습니다. 다시 시도해 주세요.");
+              if (recordingType === 'game_input') setGameRecordingIndex(null);
             } finally {
               setIsLoading(false);
               setLoadingMessage(undefined);
