@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(curl:*)",
+      "WebSearch",
+      "WebFetch(domain:ai.google.dev)",
+      "Bash(taskkill /F /PID 5532)",
+      "Bash(taskkill //F //PID 5532)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

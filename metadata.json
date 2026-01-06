@@ -1,0 +1,7 @@
+{
+  "name": "StorySpeak AI",
+  "description": "A personalized English learning platform where your own stories become the curriculum. Features AI-generated lessons, pronunciation analysis, and real-time situational roleplay.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
