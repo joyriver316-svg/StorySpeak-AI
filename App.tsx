@@ -565,21 +565,21 @@ const App: React.FC = () => {
   };
 
   const renderInputStep = () => (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="bg-white p-8 rounded-3xl shadow-xl border border-slate-100">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center text-xl">
+    <div className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
+      <div className="bg-white p-6 md:p-8 rounded-[2rem] shadow-xl border border-slate-100">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-3 mb-6">
+          <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center text-xl shrink-0">
             <i className="fas fa-feather-pointed"></i>
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-slate-800">당신의 이야기를 들려주세요</h2>
-            <p className="text-slate-500 text-sm">텍스트를 입력하거나 마이크 버튼을 한 번 눌러 말해보세요.</p>
+            <h2 className="text-lg md:text-2xl font-bold text-slate-800 whitespace-nowrap">당신의 이야기를 들려주세요</h2>
+            <p className="text-slate-500 text-sm mt-1">텍스트를 입력하거나 마이크 버튼을 한 번 눌러 말해보세요.</p>
           </div>
         </div>
 
         <div className="relative group">
           <textarea
-            className={`w-full h-56 p-6 rounded-2xl bg-slate-50 border-2 transition-all duration-300 resize-none text-slate-700 leading-relaxed text-lg outline-none ${isInputRecording
+            className={`w-full h-48 md:h-56 p-5 md:p-6 rounded-2xl bg-slate-50 border-2 transition-all duration-300 resize-none text-slate-700 leading-relaxed text-base md:text-lg outline-none ${isInputRecording
               ? 'border-rose-500 bg-rose-50 ring-4 ring-rose-50'
               : 'border-slate-100 focus:border-indigo-500 focus:bg-white'
               }`}
@@ -606,9 +606,9 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-8">
+        <div className="mt-6 md:mt-8">
           <label className="block text-sm font-bold text-slate-700 mb-3 ml-1">나의 영어 레벨</label>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-3 md:gap-4">
             {[
               { id: LearningLevel.BEGINNER, label: '초급', desc: '기본 문장' },
               { id: LearningLevel.INTERMEDIATE, label: '중급', desc: '일상 대화' },
@@ -617,12 +617,12 @@ const App: React.FC = () => {
               <button
                 key={lvl.id}
                 onClick={() => setState(prev => ({ ...prev, level: lvl.id }))}
-                className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-1 ${state.level === lvl.id
+                className={`p-3 md:p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-1 ${state.level === lvl.id
                   ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-100'
                   : 'bg-white text-slate-600 border-slate-100 hover:border-slate-200'
                   }`}
               >
-                <span className="font-bold">{lvl.label}</span>
+                <span className="font-bold text-sm md:text-base">{lvl.label}</span>
                 <span className={`text-[10px] uppercase tracking-wider ${state.level === lvl.id ? 'text-indigo-200' : 'text-slate-400'}`}>
                   {lvl.id}
                 </span>
@@ -634,7 +634,7 @@ const App: React.FC = () => {
         <button
           onClick={handleGenerateLesson}
           disabled={!state.storyInput.trim() || isLoading}
-          className="w-full mt-10 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-200 text-white font-bold py-5 rounded-2xl shadow-xl shadow-indigo-100 transition-all flex items-center justify-center gap-3 text-lg"
+          className="w-full mt-8 md:mt-10 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-200 text-white font-bold py-4 md:py-5 rounded-2xl shadow-xl shadow-indigo-100 transition-all flex items-center justify-center gap-3 text-lg"
         >
           {isLoading ? <i className="fas fa-circle-notch animate-spin"></i> : <i className="fas fa-wand-magic-sparkles"></i>}
           AI 레슨 생성하기
@@ -783,33 +783,35 @@ const App: React.FC = () => {
     if (!state.lesson) return null;
     return (
       <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-3 md:gap-4">
             <button
               onClick={() => setState(prev => ({ ...prev, step: 'INPUT' }))}
-              className="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50 transition-colors shadow-sm"
+              className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50 transition-colors shadow-sm shrink-0"
             >
               <i className="fas fa-chevron-left"></i>
             </button>
             <div>
-              <h2 className="text-2xl font-bold text-slate-800">{state.lesson.title}</h2>
-              <p className="text-sm text-slate-500 font-medium">나의 이야기를 바탕으로 구성된 핵심 문장입니다.</p>
+              <h2 className="text-lg md:text-2xl font-bold text-slate-800 leading-tight">{state.lesson.title}</h2>
+              <div className="flex items-center gap-2 mt-1">
+                <p className="text-xs md:text-sm text-slate-500 font-medium leading-snug">나의 이야기를 바탕으로 구성된 핵심 문장입니다.</p>
+                <button
+                  onClick={handleSavePDF}
+                  className="flex items-center gap-1 px-2 py-1 bg-indigo-600 text-white rounded-lg font-bold text-[10px] hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100 shrink-0"
+                >
+                  <i className="fas fa-file-pdf"></i>
+                  PDF
+                </button>
+              </div>
             </div>
           </div>
-          <button
-            onClick={handleSavePDF}
-            className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100"
-          >
-            <i className="fas fa-file-pdf"></i>
-            PDF 저장
-          </button>
         </div>
 
         <div className="grid gap-5">
           {state.lesson.sentences.map((item, idx) => (
             <div
               key={idx}
-              className={`p-6 rounded-3xl border-2 transition-all cursor-pointer ${state.selectedSentenceIndex === idx
+              className={`p-4 md:p-6 rounded-3xl border-2 transition-all cursor-pointer ${state.selectedSentenceIndex === idx
                 ? 'bg-white border-indigo-500 shadow-xl ring-4 ring-indigo-50'
                 : 'bg-white border-slate-100 hover:border-slate-200 shadow-sm'
                 }`}
@@ -854,34 +856,34 @@ const App: React.FC = () => {
           ))}
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/90 backdrop-blur-xl border-t border-slate-100 flex gap-4 max-w-4xl mx-auto z-10 shadow-2xl rounded-t-[32px]">
+        <div className="fixed bottom-0 left-0 right-0 p-3 md:p-6 bg-white/90 backdrop-blur-xl border-t border-slate-100 flex gap-2 md:gap-4 max-w-4xl mx-auto z-10 shadow-2xl rounded-t-[20px] md:rounded-t-[32px] overflow-x-auto custom-scrollbar">
           <button
             onClick={() => setState(prev => ({ ...prev, step: 'PRACTICE' }))}
-            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-indigo-200 transition-all flex items-center justify-center gap-2"
+            className="flex-1 min-w-[70px] md:min-w-[120px] bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 md:py-4 rounded-xl md:rounded-2xl shadow-lg shadow-indigo-200 transition-all flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 text-xs md:text-base whitespace-nowrap"
           >
-            <i className="fas fa-microphone-lines"></i>
-            발음 연습하기
+            <i className="fas fa-microphone-lines text-lg md:text-xl"></i>
+            <span>발음</span>
           </button>
           <button
             onClick={() => setShowGameSettings(true)}
-            className="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-amber-200 transition-all flex items-center justify-center gap-2"
+            className="flex-1 min-w-[70px] md:min-w-[120px] bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 md:py-4 rounded-xl md:rounded-2xl shadow-lg shadow-amber-200 transition-all flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 text-xs md:text-base whitespace-nowrap"
           >
-            <i className="fas fa-puzzle-piece"></i>
-            문장 연습
+            <i className="fas fa-puzzle-piece text-lg md:text-xl"></i>
+            <span>문장</span>
           </button>
           <button
             onClick={handleStartWordGame}
-            className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-emerald-200 transition-all flex items-center justify-center gap-2"
+            className="flex-1 min-w-[70px] md:min-w-[120px] bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 md:py-4 rounded-xl md:rounded-2xl shadow-lg shadow-emerald-200 transition-all flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 text-xs md:text-base whitespace-nowrap"
           >
-            <i className="fas fa-layer-group"></i>
-            단어 연습
+            <i className="fas fa-layer-group text-lg md:text-xl"></i>
+            <span>단어</span>
           </button>
           <button
             onClick={handleStartRoleplay}
-            className="flex-1 bg-white border-2 border-indigo-600 text-indigo-600 font-bold py-4 rounded-2xl hover:bg-indigo-50 transition-all flex items-center justify-center gap-2"
+            className="flex-1 min-w-[70px] md:min-w-[120px] bg-white border-2 border-indigo-600 text-indigo-600 font-bold py-3 md:py-4 rounded-xl md:rounded-2xl hover:bg-indigo-50 transition-all flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 text-xs md:text-base whitespace-nowrap"
           >
-            <i className="fas fa-comments"></i>
-            AI와 대화하기
+            <i className="fas fa-comments text-lg md:text-xl"></i>
+            <span>AI 대화</span>
           </button>
           <button
             onClick={() => {
@@ -893,9 +895,9 @@ const App: React.FC = () => {
                 })
                 .catch(err => alert("PDF 목록을 불러오는데 실패했습니다."));
             }}
-            className="w-16 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-4 rounded-2xl transition-all flex items-center justify-center shadow-sm"
+            className="w-12 md:w-16 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 md:py-4 rounded-xl md:rounded-2xl transition-all flex flex-col md:flex-row items-center justify-center shadow-sm shrink-0"
           >
-            <i className="fas fa-list"></i>
+            <i className="fas fa-list text-lg md:text-xl"></i>
           </button>
         </div>
 
@@ -1035,53 +1037,53 @@ const App: React.FC = () => {
           <h2 className="text-2xl font-bold text-slate-800">정확하게 읽어보세요</h2>
         </div>
 
-        <div className="bg-white p-10 rounded-[40px] shadow-xl border border-slate-100 text-center space-y-10">
-          <div className="space-y-4">
-            <span className="px-4 py-1.5 bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-[0.2em] rounded-full">Practice Mode</span>
-            <p className="text-3xl font-black text-slate-800 leading-tight">"{sentence.english}"</p>
-            <p className="text-lg text-slate-400 font-medium">{sentence.korean}</p>
+        <div className="bg-white p-4 md:p-10 rounded-[24px] md:rounded-[40px] shadow-xl border border-slate-100 text-center space-y-4 md:space-y-10">
+          <div className="space-y-2 md:space-y-4">
+            <span className="px-2 py-1 md:px-4 md:py-1.5 bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-[0.2em] rounded-full">Practice Mode</span>
+            <p className="text-lg md:text-3xl font-black text-slate-800 leading-tight">"{sentence.english}"</p>
+            <p className="text-sm md:text-lg text-slate-400 font-medium">{sentence.korean}</p>
           </div>
 
-          <div className="flex flex-col items-center gap-10">
+          <div className="flex flex-col items-center gap-4 md:gap-10">
             <button
               onClick={() => handlePlayTTS(sentence.english)}
-              className="group flex items-center gap-4 bg-indigo-50 text-indigo-600 px-8 py-4 rounded-2xl hover:bg-indigo-100 transition-all"
+              className="group flex items-center gap-2 md:gap-4 bg-indigo-50 text-indigo-600 px-4 py-2 md:px-8 md:py-4 rounded-xl md:rounded-2xl hover:bg-indigo-100 transition-all"
             >
-              <div className="w-12 h-12 bg-indigo-600 text-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-indigo-100">
-                <i className="fas fa-play ml-1"></i>
+              <div className="w-8 h-8 md:w-12 md:h-12 bg-indigo-600 text-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-indigo-100">
+                <i className="fas fa-play ml-0.5 text-xs md:text-base"></i>
               </div>
-              <span className="font-bold text-lg">원어민 발음 듣기</span>
+              <span className="font-bold text-sm md:text-lg">원어민 발음 듣기</span>
             </button>
 
-            <div className="relative w-full py-10 flex flex-col items-center justify-center border-y border-slate-50 select-none">
+            <div className="relative w-full py-4 md:py-10 flex flex-col items-center justify-center border-y border-slate-50 select-none">
               <button
                 onClick={handleTogglePracticeRecording}
-                className={`w-28 h-28 rounded-full flex items-center justify-center text-white text-4xl shadow-2xl transition-all duration-300 transform ${isRecording
-                  ? 'bg-rose-500 scale-125 ring-[12px] ring-rose-100 animate-pulse'
+                className={`w-16 h-16 md:w-28 md:h-28 rounded-full flex items-center justify-center text-white text-xl md:text-4xl shadow-2xl transition-all duration-300 transform ${isRecording
+                  ? 'bg-rose-500 scale-125 ring-[6px] md:ring-[12px] ring-rose-100 animate-pulse'
                   : 'bg-indigo-600 hover:bg-indigo-700 hover:scale-105 active:scale-90'
                   }`}
                 style={{ touchAction: 'none' }}
               >
                 <i className={`fas ${isRecording ? 'fa-stop' : 'fa-microphone'}`}></i>
               </button>
-              <p className={`text-sm font-bold mt-6 transition-colors duration-200 ${isRecording ? 'text-rose-600' : 'text-slate-400'}`}>
-                {isRecording ? "녹음 중입니다... 다시 눌러서 종료하세요" : "버튼을 눌러서 말해보세요"}
+              <p className={`text-[10px] md:text-sm font-bold mt-3 md:mt-6 transition-colors duration-200 ${isRecording ? 'text-rose-600' : 'text-slate-400'}`}>
+                {isRecording ? "녹음 중... 종료하려면 클릭" : "버튼을 눌러서 말해보세요"}
               </p>
             </div>
           </div>
 
           {pronunciationResult && (
-            <div className="animate-in fade-in slide-in-from-top-4 duration-500">
-              <div className="flex flex-col items-center mb-8">
-                <div className="text-7xl font-black text-indigo-600 mb-2 drop-shadow-sm">{pronunciationResult.score}</div>
-                <div className="text-xs font-black text-slate-400 uppercase tracking-[0.3em]">AI Pronunciation Score</div>
+            <div className="animate-in fade-in slide-in-from-top-4 duration-500 mt-6 md:mt-0">
+              <div className="flex flex-col items-center mb-4 md:mb-8">
+                <div className="text-5xl md:text-7xl font-black text-indigo-600 mb-1 md:mb-2 drop-shadow-sm">{pronunciationResult.score}</div>
+                <div className="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-[0.3em]">AI Pronunciation Score</div>
               </div>
-              <div className="bg-indigo-50/50 p-6 rounded-3xl text-left border-2 border-indigo-100">
+              <div className="bg-indigo-50/50 p-4 md:p-6 rounded-3xl text-left border-2 border-indigo-100">
                 <div className="flex items-center gap-2 mb-2">
-                  <i className="fas fa-wand-magic text-indigo-400"></i>
-                  <span className="text-xs font-black text-indigo-400 uppercase tracking-widest">AI 피드백</span>
+                  <i className="fas fa-wand-magic text-indigo-400 text-xs md:text-base"></i>
+                  <span className="text-[10px] md:text-xs font-black text-indigo-400 uppercase tracking-widest">AI 피드백</span>
                 </div>
-                <p className="text-indigo-900 leading-relaxed font-medium whitespace-pre-wrap">{pronunciationResult.feedback}</p>
+                <p className="text-indigo-900 leading-relaxed font-medium whitespace-pre-wrap text-sm md:text-base">{pronunciationResult.feedback}</p>
               </div>
             </div>
           )}
@@ -1163,8 +1165,8 @@ const App: React.FC = () => {
             </div>
             <div className="text-left">
               <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Microphone</div>
-              <div className={`text-lg font-black transition-colors ${isRoleplayMicOn ? 'text-rose-600' : 'text-indigo-600'}`}>
-                {isRoleplayMicOn ? 'AI가 듣고 있습니다' : '눌러서 마이크 켜기'}
+              <div className={`text-xs md:text-lg font-black transition-colors whitespace-nowrap ${isRoleplayMicOn ? 'text-rose-600' : 'text-indigo-600'}`}>
+                {isRoleplayMicOn ? 'AI가 듣고 있습니다' : '마이크켜기'}
               </div>
             </div>
           </button>
@@ -1212,7 +1214,7 @@ const App: React.FC = () => {
     <Layout>
       {showIntro && renderIntro()}
       {isLoading && <LoadingOverlay message={loadingMessage} />}
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto px-4 md:px-0 pb-24 md:pb-0">
         {state.step === 'INPUT' && renderInputStep()}
         {state.step === 'LESSON' && renderLessonStep()}
         {state.step === 'PRACTICE' && renderPracticeStep()}
