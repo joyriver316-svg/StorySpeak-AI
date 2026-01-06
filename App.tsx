@@ -502,6 +502,7 @@ const App: React.FC = () => {
 
   const [showPdfList, setShowPdfList] = useState(false);
   const [pdfList, setPdfList] = useState<string[]>([]);
+  const [pdfSearchQuery, setPdfSearchQuery] = useState("");
 
   // Word Game State
   const [wordGameIndex, setWordGameIndex] = useState(0);
@@ -898,6 +899,8 @@ const App: React.FC = () => {
           </button>
         </div>
 
+
+
         {/* PDF List Modal */}
         {showPdfList && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
@@ -908,29 +911,46 @@ const App: React.FC = () => {
                   <i className="fas fa-times text-xl"></i>
                 </button>
               </div>
+
+              {/* Search Input */}
+              <div className="relative">
+                <i className="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                <input
+                  type="text"
+                  placeholder="파일명 검색..."
+                  value={pdfSearchQuery}
+                  onChange={(e) => setPdfSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white outline-none transition-all"
+                />
+              </div>
+
               <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-2">
-                {pdfList.length === 0 ? (
-                  <p className="text-center text-slate-400 py-10">저장된 PDF가 없습니다.</p>
+                {pdfList.filter(file => file.toLowerCase().includes(pdfSearchQuery.toLowerCase())).length === 0 ? (
+                  <p className="text-center text-slate-400 py-10">
+                    {pdfSearchQuery ? "검색 결과가 없습니다." : "저장된 PDF가 없습니다."}
+                  </p>
                 ) : (
-                  pdfList.map((file, idx) => (
-                    <a
-                      key={idx}
-                      href={`http://localhost:4000/pdfs/${file}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block p-4 rounded-2xl bg-slate-50 hover:bg-indigo-50 border border-slate-100 hover:border-indigo-200 transition-all group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-rose-500 shadow-sm group-hover:scale-110 transition-transform">
-                          <i className="fas fa-file-pdf"></i>
+                  pdfList
+                    .filter(file => file.toLowerCase().includes(pdfSearchQuery.toLowerCase()))
+                    .map((file, idx) => (
+                      <a
+                        key={idx}
+                        href={`http://localhost:4000/pdfs/${file}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block p-4 rounded-2xl bg-slate-50 hover:bg-indigo-50 border border-slate-100 hover:border-indigo-200 transition-all group"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-rose-500 shadow-sm group-hover:scale-110 transition-transform">
+                            <i className="fas fa-file-pdf"></i>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-slate-700 truncate group-hover:text-indigo-700">{file}</p>
+                          </div>
+                          <i className="fas fa-external-link-alt text-slate-300 group-hover:text-indigo-400"></i>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-bold text-slate-700 truncate group-hover:text-indigo-700">{file}</p>
-                        </div>
-                        <i className="fas fa-external-link-alt text-slate-300 group-hover:text-indigo-400"></i>
-                      </div>
-                    </a>
-                  ))
+                      </a>
+                    ))
                 )}
               </div>
             </div>
